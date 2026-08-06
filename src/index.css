@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Share+Tech+Mono&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Global */
+    --bg-color: #000000;
+    --text-color: #ffffff;
+    --accent-red: #E60012;
+    --accent-blue: #00C3E3;
+    --error-color: #E60012;
+    
+    /* Game/Switch Theme */
+    --win-bg: #1a1a1a;
+    --win-text: #ffffff;
+    --win-border: #333333;
+    --win-titlebar: #E60012;
+    --win-titletext: #fff;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+}
+
+@layer components {
+  .flex-center {
+    @apply flex flex-col justify-center items-center min-h-screen w-full;
+  }
+
+  .glitch {
+    position: relative;
+    font-family: 'Share Tech Mono', monospace;
+    color: white;
+    font-size: 2rem;
+    letter-spacing: 0.1em;
+  }
+
+  .terminal-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--error-color);
+    color: var(--error-color);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.5rem;
+    outline: none;
+    text-align: center;
+  }
+
+  .windows-bg {
+    @apply h-screen w-screen p-2 sm:p-4 md:p-8 flex flex-col bg-[#0a0a0a];
+  }
+  
+  .windows-window {
+    @apply flex-1 flex flex-col bg-[#f0f0f0] border-2 border-[#808080] shadow-lg rounded-sm overflow-hidden mx-auto w-full max-w-5xl;
+  }
+}
