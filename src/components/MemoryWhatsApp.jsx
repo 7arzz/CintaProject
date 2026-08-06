@@ -38,7 +38,7 @@ export default function MemoryWhatsApp({ onUnlock }) {
           type="text" 
           value={input} 
           onChange={(e) => setInput(e.target.value)} 
-          style={{ flex: 1, padding: '10px', borderRadius: '20px', border: '1px solid #ccc', outline: 'none' }}
+          style={{ flex: 1, padding: '10px', borderRadius: '20px', border: '1px solid #ccc', outline: 'none', color: '#000', backgroundColor: '#fff' }}
           placeholder="Type a message"
         />
         <button type="submit" style={{ marginLeft: '10px', padding: '10px 15px', borderRadius: '50%', border: 'none', backgroundColor: '#25d366', color: 'white', cursor: 'pointer' }}>
