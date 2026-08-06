@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { GAME_DATA } from '../data';
 
 export default function MemoryPuzzle({ onUnlock }) {
-  // Target: 13, 02, 2026
+  // Target from config
+  const t = GAME_DATA.anniversaryTarget;
   // We have 4 slots: 3 numbers + 1 empty
-  const initialTiles = ['2026', '13', null, '02'];
+  const initialTiles = [t.year, t.day, null, t.month];
   const [tiles, setTiles] = useState(initialTiles);
 
   const handleTileClick = (index) => {
@@ -20,12 +22,12 @@ export default function MemoryPuzzle({ onUnlock }) {
 
   useEffect(() => {
     // Check win condition
-    if (tiles[0] === '13' && tiles[1] === '02' && tiles[2] === '2026') {
+    if (tiles[0] === t.day && tiles[1] === t.month && tiles[2] === t.year) {
       setTimeout(() => {
         onUnlock();
       }, 500);
     }
-  }, [tiles, onUnlock]);
+  }, [tiles, onUnlock, t]);
 
   return (
     <div style={{ textAlign: 'center', padding: '2rem' }}>

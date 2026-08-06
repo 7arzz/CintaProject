@@ -15,6 +15,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { GAME_DATA } from '../data';
 
 const SortableItem = ({ id, text }) => {
   const {
@@ -31,10 +32,12 @@ const SortableItem = ({ id, text }) => {
     padding: '15px',
     margin: '10px 0',
     backgroundColor: '#fff',
+    color: '#000', // Ensure text is visible
     border: '1px solid #ddd',
     borderRadius: '8px',
     cursor: 'grab',
     boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    touchAction: 'none' // Prevent scrolling while dragging on mobile
   };
 
   return (
@@ -45,12 +48,8 @@ const SortableItem = ({ id, text }) => {
 };
 
 export default function MemoryChatDrag({ onUnlock }) {
-  // Correct order is 1, 2, 3
-  const [items, setItems] = useState([
-    { id: '3', text: 'terima kasih untuk semuanya' },
-    { id: '1', text: 'aku pamit ya' },
-    { id: '2', text: 'jaga diri baik-baik' },
-  ]);
+  // We use the array from GAME_DATA
+  const [items, setItems] = useState([...GAME_DATA.separationChats]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),

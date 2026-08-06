@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import MemoryWhatsApp from './MemoryWhatsApp';
 import MemoryPuzzle from './MemoryPuzzle';
 import MemoryChatDrag from './MemoryChatDrag';
+import { GAME_DATA } from '../data';
 
 export default function ArchiveStage() {
   const [unlockedFolders, setUnlockedFolders] = useState(['Memories']);
@@ -163,7 +164,7 @@ export default function ArchiveStage() {
                 <div 
                   onClick={() => {
                     alert("Launching Archive...");
-                    window.location.href = 'https://canva.com/scrapbook-river'; // Placeholder Link
+                    window.location.href = GAME_DATA.scrapbookLink;
                   }} 
                   className="cursor-pointer flex flex-col items-center justify-center p-6 border-2 border-[#E60012] bg-[#1a1a1a] hover:bg-[#333] rounded transition-all shadow-[0_0_15px_#E60012] transform hover:scale-105"
                 >

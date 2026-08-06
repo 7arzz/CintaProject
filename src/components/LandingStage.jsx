@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { GAME_DATA } from '../data';
 
 export default function LandingStage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(0);
   const [phase, setPhase] = useState('loading'); // loading -> glitch -> 404
   const [keyInput, setKeyInput] = useState('');
-
-  // Placeholder for Recovery Key from prompt:
-  const RECOVERY_KEY = 'YOUR_RECOVERY_KEY_HERE'; 
 
   useEffect(() => {
     if (phase === 'loading') {
@@ -36,7 +34,7 @@ export default function LandingStage() {
   }, [phase]);
 
   const handleSubmit = () => {
-    if (keyInput === RECOVERY_KEY || RECOVERY_KEY === 'YOUR_RECOVERY_KEY_HERE') {
+    if (keyInput === GAME_DATA.recoveryKey) {
       // success!
       alert('Recovery Successful. Owner Found. River.');
       navigate('/archive');
