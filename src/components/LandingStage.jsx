@@ -54,20 +54,43 @@ export default function LandingStage() {
   return (
     <div className="flex justify-center items-center h-screen w-screen bg-[#0a0a0a]">
       {phase === 'loading' && (
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">ARCHIVE</h1>
-          <p className="text-gray-400">Loading... {loading}%</p>
+        <div className="text-center font-mono w-full max-w-md px-4">
+          <h1 className="text-3xl font-bold mb-4 text-[#00C3E3] tracking-[0.2em] uppercase">SYSTEM_ARCHIVE</h1>
+          <div className="w-full h-4 bg-[#222] border-2 border-[#333] rounded-sm overflow-hidden mb-2 relative">
+            <div 
+              className="h-full bg-[#E60012] transition-all duration-500 ease-out"
+              style={{ width: `${loading}%` }}
+            ></div>
+          </div>
+          <p className="text-gray-400 text-sm">Loading modules... {loading}%</p>
         </div>
       )}
 
       {phase === 'glitch' && (
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="glitch text-center px-4"
+          animate={{ 
+            opacity: 1, 
+            x: [-2, 2, -2, 2, 0],
+            textShadow: [
+              "2px 0px 0px #E60012, -2px 0px 0px #00C3E3",
+              "-2px 0px 0px #E60012, 2px 0px 0px #00C3E3",
+              "2px 0px 0px #E60012, -2px 0px 0px #00C3E3",
+              "0px 0px 0px transparent, 0px 0px 0px transparent"
+            ]
+          }}
+          transition={{ duration: 0.2, repeat: Infinity, repeatDelay: 1 }}
+          className="text-center px-4 font-mono text-xl md:text-2xl font-bold tracking-widest text-white uppercase"
         >
-          <p>Some memories refused to load.</p>
-          <p>...unless it's you.</p>
+          <motion.p 
+            initial={{ opacity: 1 }} 
+            animate={{ opacity: [1, 0.5, 1, 0, 1] }} 
+            transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 0.5 }}
+            className="mb-4"
+          >
+            Some memories refused to load.
+          </motion.p>
+          <p className="text-[#00C3E3]">...unless it's you.</p>
         </motion.div>
       )}
 
