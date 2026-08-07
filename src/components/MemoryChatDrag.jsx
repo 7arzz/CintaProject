@@ -17,7 +17,17 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { GAME_DATA } from '../data';
 
-const SortableItem = ({ id, text, index, solved }) => {
+// Fisher-Yates shuffle
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const SortableItem = ({ id, text, solved }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
   const style = {
@@ -47,35 +57,23 @@ const SortableItem = ({ id, text, index, solved }) => {
         opacity: isDragging ? 0.85 : 1,
         transition: 'background 0.2s, border-color 0.2s',
       }}>
-        {/* Index badge */}
-        <span style={{
-          width: '22px', height: '22px',
-          borderRadius: '50%',
-          background: solved ? 'rgba(0,212,255,0.15)' : 'var(--bg)',
-          border: '1px solid var(--border)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '10px',
-          fontFamily: "'JetBrains Mono',monospace",
-          color: solved ? 'var(--cyan)' : 'var(--text-muted)',
-          flexShrink: 0
-        }}>
-          {index + 1}
-        </span>
         <span style={{
           fontSize: '13px',
           color: solved ? 'var(--cyan)' : 'var(--text)',
-          flex: 1
+          flex: 1,
+          textAlign: 'left'
         }}>
           {text}
         </span>
-        <span style={{ color: 'var(--text-muted)', fontSize: '14px', opacity: 0.5 }}>⠿</span>
+        <span style={{ color: 'var(--text-muted)', fontSize: '14px', opacity: 0.4 }}>⠿</span>
       </div>
     </div>
   );
 };
 
 export default function MemoryChatDrag({ onUnlock }) {
-  const [items, setItems] = useState([...GAME_DATA.separationChats]);
+  // Shuffle once on mount so user must sort them
+  const [items, setItems] = useState(() => shuffle(GAME_DATA.separationChats));
   const [solved, setSolved] = useState(false);
 
   const sensors = useSensors(
@@ -130,12 +128,11 @@ export default function MemoryChatDrag({ onUnlock }) {
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
-          {items.map((item, index) => (
+          {items.map((item) => (
             <SortableItem
               key={item.id}
               id={item.id}
               text={item.text}
-              index={index}
               solved={solved}
             />
           ))}
