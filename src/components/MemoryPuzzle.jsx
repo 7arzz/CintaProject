@@ -80,63 +80,84 @@ export default function MemoryPuzzle({ onUnlock }) {
   if (phase === 'scratch') {
     return (
       <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        style={{ textAlign: 'center', padding: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', width: '100%', maxWidth: '900px' }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        style={{ 
+          position: 'fixed',
+          top: 0, left: 0,
+          width: '100vw', height: '100vh',
+          zIndex: 9999,
+          background: 'rgba(7, 7, 15, 0.85)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          padding: '16px',
+          gap: '20px'
+        }}
       >
-        <p style={{
-          fontFamily: "'JetBrains Mono',monospace",
-          fontSize: '12px',
-          color: 'var(--accent)',
-          letterSpacing: '0.1em'
-        }}>
-          // NEW_RECORD_UNLOCKED
-        </p>
+        <motion.div
+          initial={{ scale: 0.9, y: 20 }}
+          animate={{ scale: 1, y: 0 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          style={{ width: '100%', maxWidth: '900px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}
+        >
+          <p style={{
+            fontFamily: "'JetBrains Mono',monospace",
+            fontSize: '14px',
+            color: 'var(--accent)',
+            letterSpacing: '0.15em',
+            textShadow: 'var(--glow-red)'
+          }}>
+            // NEW_RECORD_UNLOCKED
+          </p>
 
-        <div style={{ position: 'relative', width: '100%', maxWidth: '800px', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.3)', background: '#111' }}>
-          <img 
-            src={acteImg} 
-            alt="Acte de Marriage" 
-            style={{ width: '100%', height: 'auto', display: 'block', pointerEvents: 'none' }} 
-          />
-          <canvas
-            ref={canvasRef}
-            width={800}
-            height={600}
-            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', cursor: 'crosshair', touchAction: 'none' }}
-            onMouseDown={() => isDrawing.current = true}
-            onMouseUp={() => isDrawing.current = false}
-            onMouseLeave={() => isDrawing.current = false}
-            onMouseMove={handleScratch}
-            onTouchStart={() => isDrawing.current = true}
-            onTouchEnd={() => isDrawing.current = false}
-            onTouchMove={handleScratch}
-          />
-        </div>
+          <div style={{ position: 'relative', width: '100%', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 12px 48px rgba(0,0,0,0.6)', background: '#111' }}>
+            <img 
+              src={acteImg} 
+              alt="Acte de Marriage" 
+              style={{ width: '100%', maxHeight: '75vh', objectFit: 'contain', display: 'block', pointerEvents: 'none' }} 
+            />
+            <canvas
+              ref={canvasRef}
+              width={1000}
+              height={700}
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', cursor: 'crosshair', touchAction: 'none' }}
+              onMouseDown={() => isDrawing.current = true}
+              onMouseUp={() => isDrawing.current = false}
+              onMouseLeave={() => isDrawing.current = false}
+              onMouseMove={handleScratch}
+              onTouchStart={() => isDrawing.current = true}
+              onTouchEnd={() => isDrawing.current = false}
+              onTouchMove={handleScratch}
+            />
+          </div>
 
-        <AnimatePresence>
-          {scratchProgress > 60 && (
-            <motion.button
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              onClick={onUnlock}
-              style={{
-                padding: '10px 24px',
-                background: 'var(--cyan)',
-                color: '#000',
-                border: 'none',
-                borderRadius: '6px',
-                fontFamily: "'JetBrains Mono',monospace",
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                fontSize: '14px',
-                boxShadow: '0 0 15px rgba(0,212,255,0.4)'
-              }}
-            >
-              NEXT ›
-            </motion.button>
-          )}
-        </AnimatePresence>
+          <AnimatePresence>
+            {scratchProgress > 60 && (
+              <motion.button
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                onClick={onUnlock}
+                style={{
+                  padding: '12px 32px',
+                  background: 'var(--cyan)',
+                  color: '#000',
+                  border: 'none',
+                  borderRadius: '6px',
+                  fontFamily: "'JetBrains Mono',monospace",
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  fontSize: '16px',
+                  boxShadow: 'var(--glow-cyan)'
+                }}
+              >
+                NEXT ›
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </motion.div>
     );
   }
