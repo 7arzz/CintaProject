@@ -1,15 +1,27 @@
 import React, { useState } from 'react';
-import { GAME_DATA } from '../data';
+import { GAME_DATA } from '../data';import dazaiImg from '../assets/dazai.jpg';
 
 export default function MemoryWhatsApp({ onUnlock }) {
   const [input, setInput] = useState('');
   const [denied, setDenied] = useState(false);
+  const [submittedMsg, setSubmittedMsg] = useState(null);
+  const chatRef = React.useRef(null);
   const target = GAME_DATA.firstContactChat;
+
+  React.useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, [submittedMsg, denied]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (input.toLowerCase().trim() === target.toLowerCase()) {
-      onUnlock();
+      setSubmittedMsg(input);
+      setInput('');
+      setTimeout(() => {
+        onUnlock();
+      }, 1500);
     } else {
       setDenied(true);
       setTimeout(() => setDenied(false), 1500);
@@ -44,69 +56,150 @@ export default function MemoryWhatsApp({ onUnlock }) {
           background: 'linear-gradient(135deg, var(--accent), var(--cyan))',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: '14px'
-        }}>R</div>
+        }}>M</div>
         <div>
-          <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}>River</p>
+          <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}>&lt;𝙈𝙮 𝘿𝙚𝙖𝙧 𝙈𝙖𝙧𝙞𝙡𝙮𝙣&gt;</p>
           <p style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "'JetBrains Mono',monospace" }}>encrypted</p>
         </div>
       </div>
 
       {/* Chat Body */}
-      <div style={{
+      <div 
+        ref={chatRef}
+        style={{
         flex: 1,
         padding: '16px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '10px',
+        gap: '4px',
         overflowY: 'auto',
-        background: 'var(--bg)'
+        background: '#0b141a', // WhatsApp Web dark background
       }}>
-        {/* Incoming */}
+        {/* Date */}
         <div style={{
-          alignSelf: 'flex-start',
-          background: 'var(--surface)',
-          border: '1px solid var(--border)',
-          borderRadius: '4px 12px 12px 12px',
-          padding: '10px 14px',
-          maxWidth: '80%',
-          fontSize: '13px',
-          color: 'var(--text-muted)',
-          fontStyle: 'italic'
+          alignSelf: 'center',
+          background: '#182229',
+          color: '#8496a0',
+          fontSize: '12px',
+          padding: '4px 12px',
+          borderRadius: '8px',
+          marginBottom: '8px',
+          marginTop: '4px'
         }}>
-          Pesan sebelumnya terenkripsi...
+          November 30, 2025
         </div>
 
-        {/* Outgoing */}
+        {/* Incoming 1 */}
+        <div style={{
+          alignSelf: 'flex-start',
+          background: '#202c33',
+          borderRadius: '0 8px 8px 8px',
+          padding: '6px 7px 8px 9px',
+          maxWidth: '80%',
+          color: '#e9edef',
+          fontSize: '14.2px',
+          position: 'relative',
+          marginBottom: '2px'
+        }}>
+          Woi parit
+          <span style={{ float: 'right', fontSize: '11px', color: '#8696a0', marginLeft: '12px', marginTop: '4px' }}>17:07</span>
+        </div>
+
+        {/* Outgoing 1 */}
         <div style={{
           alignSelf: 'flex-end',
-          background: 'rgba(0,212,255,0.08)',
-          border: '1px solid rgba(0,212,255,0.15)',
-          borderRadius: '12px 4px 12px 12px',
-          padding: '10px 14px',
+          background: '#005c4b',
+          borderRadius: '8px 0 8px 8px',
+          padding: '6px 7px 8px 9px',
           maxWidth: '80%',
-          fontSize: '13px',
-          color: 'var(--text-sub)'
+          color: '#e9edef',
+          fontSize: '14.2px',
+          marginBottom: '2px'
         }}>
-          Menunggu input memory pertama...
+          apaan den?
+          <span style={{ float: 'right', fontSize: '11px', color: '#8696a0', marginLeft: '12px', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+            17:07
+            <span style={{ color: '#53bdeb', fontSize: '14px', lineHeight: 1 }}>✓✓</span>
+          </span>
+        </div>
+
+        {/* Outgoing 2 */}
+        <div style={{
+          alignSelf: 'flex-end',
+          background: '#005c4b',
+          borderRadius: '8px 8px 8px 8px',
+          padding: '6px 7px 8px 9px',
+          maxWidth: '80%',
+          color: '#e9edef',
+          fontSize: '14.2px',
+          marginBottom: '2px'
+        }}>
+          mana, sini buruan
+          <span style={{ float: 'right', fontSize: '11px', color: '#8696a0', marginLeft: '12px', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+            17:07
+            <span style={{ color: '#53bdeb', fontSize: '14px', lineHeight: 1 }}>✓✓</span>
+          </span>
+        </div>
+
+        {/* Incoming 2 (Image) */}
+        <div style={{
+          alignSelf: 'flex-start',
+          background: '#202c33',
+          borderRadius: '0 8px 8px 8px',
+          padding: '4px',
+          maxWidth: '80%',
+          width: '240px',
+          color: '#e9edef',
+          fontSize: '14.2px',
+          marginBottom: '2px',
+          position: 'relative'
+        }}>
+          <img src={dazaiImg} alt="dazai" style={{ width: '100%', borderRadius: '6px', display: 'block' }} />
+          <div style={{ padding: '4px 4px 2px 4px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+            <span>Nyoh</span>
+            <span style={{ fontSize: '11px', color: '#8696a0' }}>17:08</span>
+          </div>
         </div>
 
         {/* Instruction */}
-        <div style={{
-          marginTop: 'auto',
-          background: 'transparent',
-          borderTop: '1px solid var(--border)',
-          paddingTop: '12px',
-          textAlign: 'center',
-          fontSize: '11px',
-          fontFamily: "'JetBrains Mono',monospace",
-          color: 'var(--text-muted)',
-          fontStyle: 'italic'
-        }}>
-          // Masukkan kalimat pertama yang pernah kamu kirim
-        </div>
+        {!submittedMsg && (
+          <div style={{
+            marginTop: 'auto',
+            background: 'transparent',
+            paddingTop: '12px',
+            textAlign: 'center',
+            fontSize: '11px',
+            fontFamily: "'JetBrains Mono',monospace",
+            color: 'var(--text-muted)',
+            fontStyle: 'italic'
+          }}>
+            // Masukkan balasan selanjutnya
+          </div>
+        )}
+
+        {/* Submitted Message */}
+        {submittedMsg && (
+          <div style={{
+            alignSelf: 'flex-end',
+            background: '#005c4b',
+            borderRadius: '8px 8px 8px 8px',
+            padding: '6px 7px 8px 9px',
+            maxWidth: '80%',
+            color: '#e9edef',
+            fontSize: '14.2px',
+            marginTop: '8px',
+            marginBottom: '2px'
+          }}>
+            {submittedMsg}
+            <span style={{ float: 'right', fontSize: '11px', color: '#8696a0', marginLeft: '12px', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '2px' }}>
+              17:09
+              <span style={{ color: '#8696a0', fontSize: '12px', lineHeight: 1 }}>✓</span>
+            </span>
+          </div>
+        )}
 
         {denied && (
-          <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--accent)', fontFamily: "'JetBrains Mono',monospace" }}>
+          <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--accent)', fontFamily: "'JetBrains Mono',monospace", marginTop: '4px' }}>
             // memory incorrect
           </p>
         )}
