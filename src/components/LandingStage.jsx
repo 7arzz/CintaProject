@@ -1,119 +1,239 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { GAME_DATA } from '../data';
 
 export default function LandingStage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(0);
-  const [phase, setPhase] = useState('loading'); // loading -> glitch -> 404
+  const [phase, setPhase] = useState('loading');
   const [keyInput, setKeyInput] = useState('');
+  const [denied, setDenied] = useState(false);
 
   useEffect(() => {
     if (phase === 'loading') {
       const stops = [12, 34, 57, 82, 97];
-      let currentStop = 0;
-      
+      let i = 0;
       const interval = setInterval(() => {
-        if (currentStop < stops.length) {
-          setLoading(stops[currentStop]);
-          currentStop++;
+        if (i < stops.length) {
+          setLoading(stops[i++]);
         } else {
           clearInterval(interval);
-          setTimeout(() => setPhase('glitch'), 1000);
+          setTimeout(() => setPhase('glitch'), 800);
         }
-      }, 800);
+      }, 700);
       return () => clearInterval(interval);
     }
   }, [phase]);
 
   useEffect(() => {
     if (phase === 'glitch') {
-      setTimeout(() => setPhase('404'), 4000);
+      setTimeout(() => setPhase('404'), 3500);
     }
   }, [phase]);
 
   const handleSubmit = () => {
-    if (keyInput === GAME_DATA.recoveryKey) {
-      // success!
-      alert('Recovery Successful. Owner Found. River.');
+    const trimmed = keyInput.trim();
+    console.log('[DEBUG] input:', JSON.stringify(trimmed));
+    console.log('[DEBUG] expected:', JSON.stringify(GAME_DATA.recoveryKey));
+    console.log('[DEBUG] match:', trimmed === GAME_DATA.recoveryKey);
+    if (trimmed === GAME_DATA.recoveryKey) {
       navigate('/archive');
     } else {
-      alert('Access Denied');
+      setDenied(true);
+      setTimeout(() => setDenied(false), 1200);
     }
   };
 
-  const handleKeySubmit = (e) => {
-    if (e.key === 'Enter') {
-      handleSubmit();
-    }
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') handleSubmit();
   };
 
   return (
-    <div className="flex justify-center items-center h-screen w-screen bg-[#0a0a0a]">
-      {phase === 'loading' && (
-        <div className="text-center font-mono w-full max-w-md px-4">
-          <h1 className="text-3xl font-bold mb-4 text-[#00C3E3] tracking-[0.2em] uppercase">SYSTEM_ARCHIVE</h1>
-          <div className="w-full h-4 bg-[#222] border-2 border-[#333] rounded-sm overflow-hidden mb-2 relative">
-            <div 
-              className="h-full bg-[#E60012] transition-all duration-500 ease-out"
-              style={{ width: `${loading}%` }}
-            ></div>
-          </div>
-          <p className="text-gray-400 text-sm">Loading modules... {loading}%</p>
-        </div>
-      )}
+    <div className="flex justify-center items-center h-screen w-screen relative overflow-hidden"
+      style={{ background: 'var(--bg)' }}>
 
-      {phase === 'glitch' && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ 
-            opacity: 1, 
-            x: [-2, 2, -2, 2, 0],
-            textShadow: [
-              "2px 0px 0px #E60012, -2px 0px 0px #00C3E3",
-              "-2px 0px 0px #E60012, 2px 0px 0px #00C3E3",
-              "2px 0px 0px #E60012, -2px 0px 0px #00C3E3",
-              "0px 0px 0px transparent, 0px 0px 0px transparent"
-            ]
-          }}
-          transition={{ duration: 0.2, repeat: Infinity, repeatDelay: 1 }}
-          className="text-center px-4 font-mono text-xl md:text-2xl font-bold tracking-widest text-white uppercase"
-        >
-          <motion.p 
-            initial={{ opacity: 1 }} 
-            animate={{ opacity: [1, 0.5, 1, 0, 1] }} 
-            transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 0.5 }}
-            className="mb-4"
+      {/* Subtle grid background */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        backgroundImage: `
+          linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px)
+        `,
+        backgroundSize: '40px 40px',
+        pointerEvents: 'none'
+      }} />
+
+      <AnimatePresence mode="wait">
+
+        {/* ── LOADING ── */}
+        {phase === 'loading' && (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.4 }}
+            className="text-center w-full max-w-xs px-6"
           >
-            Some memories refused to load.
-          </motion.p>
-          <p className="text-[#00C3E3]">...unless it's you.</p>
-        </motion.div>
-      )}
+            <p className="mono text-xs tracking-[0.3em] text-[var(--text-muted)] uppercase mb-6">
+              System Archive
+            </p>
+            <div style={{
+              width: '100%', height: '2px',
+              background: 'var(--border-2)',
+              borderRadius: '2px',
+              overflow: 'hidden',
+              marginBottom: '12px'
+            }}>
+              <motion.div
+                style={{
+                  height: '100%',
+                  background: 'linear-gradient(90deg, var(--cyan), var(--accent))',
+                  borderRadius: '2px',
+                }}
+                animate={{ width: `${loading}%` }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+              />
+            </div>
+            <p className="mono text-xs" style={{ color: 'var(--text-muted)' }}>
+              Loading... {loading}%
+            </p>
+          </motion.div>
+        )}
 
-      {phase === '404' && (
-        <div className="text-center w-full px-4 flex flex-col items-center">
-          <h1 className="text-5xl md:text-7xl font-bold text-[#ff3366] mb-8">ERROR 404</h1>
-          <p className="mb-4 text-gray-300">Enter Recovery Key:</p>
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            <input 
-              className="terminal-input w-full max-w-[250px]"
-              autoFocus
-              value={keyInput}
-              onChange={(e) => setKeyInput(e.target.value)}
-              onKeyDown={handleKeySubmit}
-              placeholder="..."
-            />
-            <button 
-              onClick={handleSubmit}
-              className="px-6 py-2 bg-[#ff3366] text-white font-bold rounded-md hover:bg-[#e62e5c] transition-colors"
+        {/* ── GLITCH ── */}
+        {phase === 'glitch' && (
+          <motion.div
+            key="glitch"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="text-center px-6"
+          >
+            <motion.p
+              className="mono text-lg md:text-xl tracking-widest"
+              style={{ color: 'var(--text)' }}
+              animate={{
+                x: [0, -2, 2, -1, 0],
+                textShadow: [
+                  '2px 0 var(--accent), -2px 0 var(--cyan)',
+                  '-2px 0 var(--accent), 2px 0 var(--cyan)',
+                  '1px 0 var(--accent), -1px 0 var(--cyan)',
+                  'none'
+                ]
+              }}
+              transition={{ duration: 0.2, repeat: Infinity, repeatDelay: 1.2 }}
             >
-              Enter
-            </button>
-          </div>
-        </div>
-      )}
+              Some memories refused to load.
+            </motion.p>
+            <motion.p
+              className="mono text-sm mt-4"
+              style={{ color: 'var(--cyan)' }}
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ duration: 1.2, repeat: Infinity }}
+            >
+              ...unless it's you.
+            </motion.p>
+          </motion.div>
+        )}
+
+        {/* ── 404 ── */}
+        {phase === '404' && (
+          <motion.div
+            key="404"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center w-full px-6 flex flex-col items-center gap-6"
+          >
+            <div>
+              <motion.h1
+                className="mono font-bold"
+                style={{
+                  fontSize: 'clamp(3rem, 8vw, 5rem)',
+                  color: 'var(--accent)',
+                  letterSpacing: '0.05em',
+                  lineHeight: 1
+                }}
+                animate={{ opacity: [1, 0.8, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                ERROR 404
+              </motion.h1>
+              <p className="mono text-xs tracking-[0.25em] mt-2"
+                style={{ color: 'var(--text-muted)' }}>
+                MEMORY_NOT_FOUND
+              </p>
+            </div>
+
+            <div style={{
+              width: '1px', height: '40px',
+              background: 'linear-gradient(to bottom, var(--border-2), transparent)'
+            }} />
+
+            <div className="flex flex-col items-center gap-4 w-full max-w-[280px]">
+              <p className="text-xs tracking-widest uppercase"
+                style={{ color: 'var(--text-muted)' }}>
+                Enter Recovery Key
+              </p>
+              <motion.div
+                animate={denied ? { x: [-6, 6, -6, 6, 0] } : {}}
+                transition={{ duration: 0.3 }}
+                className="w-full"
+              >
+                <input
+                  className="terminal-input w-full mono"
+                  autoFocus
+                  value={keyInput}
+                  onChange={(e) => setKeyInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="_ _ _ - _ _ _ _ _ - _ _ _ _"
+                  style={{
+                    borderColor: denied ? 'var(--accent)' : undefined
+                  }}
+                />
+              </motion.div>
+
+              {denied && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mono text-xs"
+                  style={{ color: 'var(--accent)' }}
+                >
+                  // ACCESS DENIED
+                </motion.p>
+              )}
+
+              <button
+                onClick={handleSubmit}
+                className="w-full mono text-xs tracking-widest py-3 transition-all duration-200"
+                style={{
+                  background: 'var(--accent-dim)',
+                  border: '1px solid rgba(255,45,85,0.4)',
+                  borderRadius: '4px',
+                  color: 'var(--accent)',
+                  letterSpacing: '0.2em'
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = 'var(--accent)';
+                  e.currentTarget.style.color = '#fff';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'var(--accent-dim)';
+                  e.currentTarget.style.color = 'var(--accent)';
+                }}
+              >
+                EXECUTE
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+      </AnimatePresence>
     </div>
   );
 }

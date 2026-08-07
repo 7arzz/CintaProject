@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { GAME_DATA } from '../data';
 
 export default function MemoryPuzzle({ onUnlock }) {
-  // Target from config
   const t = GAME_DATA.anniversaryTarget;
-  // We have 4 slots: 3 numbers + 1 empty
   const initialTiles = [t.year, t.day, null, t.month];
   const [tiles, setTiles] = useState(initialTiles);
+  const [solved, setSolved] = useState(false);
 
   const handleTileClick = (index) => {
+    if (solved) return;
     const emptyIndex = tiles.indexOf(null);
-    // Check if adjacent (simplified for a 1x4 row or 2x2 grid)
-    // Let's just allow swapping with empty if they are next to each other
     if (Math.abs(emptyIndex - index) === 1 || Math.abs(emptyIndex - index) === 2) {
       const newTiles = [...tiles];
       newTiles[emptyIndex] = newTiles[index];
@@ -21,42 +20,93 @@ export default function MemoryPuzzle({ onUnlock }) {
   };
 
   useEffect(() => {
-    // Check win condition
     if (tiles[0] === t.day && tiles[1] === t.month && tiles[2] === t.year) {
-      setTimeout(() => {
-        onUnlock();
-      }, 500);
+      setSolved(true);
+      setTimeout(() => onUnlock(), 800);
     }
   }, [tiles, onUnlock, t]);
 
   return (
-    <div style={{ textAlign: 'center', padding: '2rem' }}>
-      <h2>Arrange the Anniversary Date</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginTop: '2rem', maxWidth: '400px', margin: '2rem auto' }}>
+    <div style={{ textAlign: 'center', padding: '2rem', maxWidth: '420px', width: '100%' }}>
+
+      <p style={{
+        fontFamily: "'JetBrains Mono',monospace",
+        fontSize: '10px',
+        letterSpacing: '0.25em',
+        color: 'var(--text-muted)',
+        textTransform: 'uppercase',
+        marginBottom: '12px'
+      }}>
+        // memory_puzzle
+      </p>
+
+      <h2 style={{
+        fontSize: '16px',
+        fontWeight: 600,
+        color: 'var(--text)',
+        marginBottom: '6px'
+      }}>
+        Arrange the Anniversary Date
+      </h2>
+
+      <p style={{
+        fontSize: '12px',
+        color: 'var(--text-muted)',
+        fontFamily: "'JetBrains Mono',monospace",
+        marginBottom: '32px'
+      }}>
+        Format: DD / MM / YYYY / _
+      </p>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: '8px',
+        marginBottom: '28px'
+      }}>
         {tiles.map((tile, i) => (
-          <div 
-            key={i} 
+          <motion.div
+            key={i}
             onClick={() => handleTileClick(i)}
-            style={{ 
-              height: '80px', 
-              backgroundColor: tile ? '#0078d7' : '#eee', 
-              color: 'white', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              fontSize: '1.5rem', 
-              fontWeight: 'bold',
+            whileHover={tile ? { scale: 1.04 } : {}}
+            whileTap={tile ? { scale: 0.96 } : {}}
+            animate={solved ? { borderColor: 'var(--cyan)' } : {}}
+            style={{
+              height: '72px',
+              background: tile
+                ? solved
+                  ? 'rgba(0,212,255,0.1)'
+                  : 'var(--surface)'
+                : 'var(--bg)',
+              border: tile
+                ? solved
+                  ? '1px solid rgba(0,212,255,0.4)'
+                  : '1px solid var(--border-2)'
+                : '1px dashed var(--border)',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.2rem',
+              fontWeight: 700,
+              fontFamily: "'JetBrains Mono',monospace",
               cursor: tile ? 'pointer' : 'default',
-              borderRadius: '5px',
-              border: tile ? '2px solid #005a9e' : '2px dashed #ccc'
+              color: solved ? 'var(--cyan)' : 'var(--text)',
+              transition: 'all 0.2s ease',
             }}
           >
-            {tile}
-          </div>
+            {tile ?? ''}
+          </motion.div>
         ))}
       </div>
-      <p style={{ marginTop: '2rem', fontStyle: 'italic', color: '#666' }}>
-        Click a tile next to the empty space to slide it.
+
+      <p style={{
+        fontSize: '11px',
+        fontFamily: "'JetBrains Mono',monospace",
+        color: 'var(--text-muted)',
+        fontStyle: 'italic'
+      }}>
+        {solved ? '// memory restored ✓' : '// click a tile next to the empty space'}
       </p>
     </div>
   );

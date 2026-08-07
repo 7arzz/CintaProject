@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,28 +6,41 @@
 
 @layer base {
   :root {
-    /* Global */
-    --bg-color: #000000;
-    --text-color: #ffffff;
-    --accent-red: #E60012;
-    --accent-blue: #00C3E3;
-    --error-color: #E60012;
-    
-    /* Game/Switch Theme */
-    --win-bg: #1a1a1a;
-    --win-text: #ffffff;
-    --win-border: #333333;
-    --win-titlebar: #E60012;
-    --win-titletext: #fff;
+    --bg:         #07070f;
+    --surface:    #0e0e1c;
+    --surface-2:  #13132a;
+    --border:     #1c1c3a;
+    --border-2:   #2a2a4a;
+
+    --accent:     #ff2d55;
+    --accent-dim: rgba(255, 45, 85, 0.15);
+    --cyan:       #00d4ff;
+    --cyan-dim:   rgba(0, 212, 255, 0.12);
+
+    --text:       #e2e2f0;
+    --text-muted: #5c5c80;
+    --text-sub:   #9090b0;
+
+    --glow-red:  0 0 20px rgba(255, 45, 85, 0.3);
+    --glow-cyan: 0 0 20px rgba(0, 212, 255, 0.3);
+  }
+
+  * {
+    box-sizing: border-box;
   }
 
   body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    background-color: var(--bg);
+    color: var(--text);
     font-family: 'Inter', sans-serif;
     overflow: hidden;
     height: 100vh;
     width: 100vw;
+  }
+
+  ::selection {
+    background: var(--accent-dim);
+    color: var(--accent);
   }
 }
 
@@ -36,30 +49,92 @@
     @apply flex flex-col justify-center items-center min-h-screen w-full;
   }
 
-  .glitch {
-    position: relative;
-    font-family: 'Share Tech Mono', monospace;
-    color: white;
-    font-size: 2rem;
-    letter-spacing: 0.1em;
+  /* Mono font */
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
   }
 
+  /* Glitch text effect */
+  .glitch {
+    position: relative;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text);
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+  }
+
+  /* Clean terminal input */
   .terminal-input {
     background: transparent;
     border: none;
-    border-bottom: 2px solid var(--error-color);
-    color: var(--error-color);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 1.5rem;
+    border-bottom: 1px solid var(--accent);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.2rem;
     outline: none;
     text-align: center;
+    padding-bottom: 6px;
+    transition: border-color 0.2s;
   }
 
-  .windows-bg {
-    @apply h-screen w-screen p-2 sm:p-4 md:p-8 flex flex-col bg-[#0a0a0a];
+  .terminal-input::placeholder {
+    color: var(--text-muted);
   }
-  
-  .windows-window {
-    @apply flex-1 flex flex-col bg-[#f0f0f0] border-2 border-[#808080] shadow-lg rounded-sm overflow-hidden mx-auto w-full max-w-5xl;
+
+  .terminal-input:focus {
+    border-bottom-color: var(--cyan);
+  }
+
+  /* Subtle scanline overlay */
+  .scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0, 0, 0, 0.04) 3px,
+      rgba(0, 0, 0, 0.04) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Panel / Card */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  /* Thin divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    width: 100%;
+  }
+
+  /* Accent badge */
+  .badge-red {
+    background: var(--accent-dim);
+    color: var(--accent);
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+    border: 1px solid rgba(255,45,85,0.3);
+  }
+
+  .badge-cyan {
+    background: var(--cyan-dim);
+    color: var(--cyan);
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+    border: 1px solid rgba(0,212,255,0.25);
   }
 }
