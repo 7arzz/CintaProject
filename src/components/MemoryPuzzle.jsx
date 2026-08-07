@@ -82,7 +82,7 @@ export default function MemoryPuzzle({ onUnlock }) {
       <motion.div 
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        style={{ textAlign: 'center', padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', width: '100%', maxWidth: '800px' }}
+        style={{ textAlign: 'center', padding: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', width: '100%', maxWidth: '900px' }}
       >
         <p style={{
           fontFamily: "'JetBrains Mono',monospace",
@@ -93,16 +93,16 @@ export default function MemoryPuzzle({ onUnlock }) {
           // NEW_RECORD_UNLOCKED
         </p>
 
-        <div style={{ position: 'relative', width: '100%', maxWidth: '640px', aspectRatio: '16/10', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.3)', background: '#111' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '800px', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.3)', background: '#111' }}>
           <img 
             src={acteImg} 
             alt="Acte de Marriage" 
-            style={{ width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }} 
+            style={{ width: '100%', height: 'auto', display: 'block', pointerEvents: 'none' }} 
           />
           <canvas
             ref={canvasRef}
-            width={640}
-            height={400}
+            width={800}
+            height={600}
             style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', cursor: 'crosshair', touchAction: 'none' }}
             onMouseDown={() => isDrawing.current = true}
             onMouseUp={() => isDrawing.current = false}
