@@ -56,9 +56,9 @@ export default function MemoryWhatsApp({ onUnlock }) {
           background: 'linear-gradient(135deg, var(--accent), var(--cyan))',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: '14px'
-        }}>M</div>
+        }}>R</div>
         <div>
-          <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}>&lt;𝙈𝙮 𝘿𝙚𝙖𝙧 𝙈𝙖𝙧𝙞𝙡𝙮𝙣&gt;</p>
+          <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}>Rp. Dewaᵃᶜᵃ'ᴬᵛᶻ..  ( ? )</p>
           <p style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: "'JetBrains Mono',monospace" }}>encrypted</p>
         </div>
       </div>
