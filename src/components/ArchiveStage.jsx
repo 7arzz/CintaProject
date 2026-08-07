@@ -17,6 +17,7 @@ export default function ArchiveStage() {
   const [activeFolder, setActiveFolder]       = useState('Memories');
   const [activeFile, setActiveFile]           = useState(null);
   const [lockedFlash, setLockedFlash]         = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen]     = useState(false);
 
   const unlockFolder = (name) => {
     if (!unlockedFolders.includes(name)) {
@@ -32,6 +33,7 @@ export default function ArchiveStage() {
     }
     setActiveFolder(folder.name);
     setActiveFile(null);
+    setIsSidebarOpen(false); // Close sidebar on mobile when an item is clicked
   };
 
   const FILE_MAP = {
@@ -119,6 +121,23 @@ export default function ArchiveStage() {
           alignItems: 'center',
           gap: '8px'
         }}>
+          {/* Hamburger Menu for Mobile */}
+          <button 
+            className="md:hidden" 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--text)',
+              fontSize: '16px',
+              cursor: 'pointer',
+              padding: '0 4px',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            ☰
+          </button>
           <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: "'JetBrains Mono', monospace" }}>›</span>
           <div style={{
             flex: 1,
@@ -138,14 +157,13 @@ export default function ArchiveStage() {
         </div>
 
         {/* ── Body ── */}
-        <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+        <div style={{ flex: 1, display: 'flex', overflow: 'hidden', position: 'relative' }}>
 
           {/* Sidebar */}
-          <div style={{
+          <div className={`${isSidebarOpen ? 'flex' : 'hidden'} md:flex absolute md:relative z-40 h-full`} style={{
             width: '180px',
             background: 'var(--bg)',
             borderRight: '1px solid var(--border)',
-            display: 'flex',
             flexDirection: 'column',
             padding: '12px 8px',
             gap: '2px',

@@ -1,6 +1,6 @@
 export const GAME_DATA = {
   // Stage 1 - ERROR 404
-  recoveryKey: "RIVER-ARCHIVE-0226",
+  recoveryKey: "SaVer1930",
 
   // Stage 2 - Case 1: First Contact (WhatsApp)
   firstContactChat: "halo boti ngh.",
