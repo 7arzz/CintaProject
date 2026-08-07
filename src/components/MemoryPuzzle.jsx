@@ -71,7 +71,7 @@ export default function MemoryPuzzle({ onUnlock }) {
 
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
-    ctx.arc(x, y, 25, 0, Math.PI * 2);
+    ctx.arc(x, y, 75, 0, Math.PI * 2);
     ctx.fill();
 
     setScratchProgress(prev => prev + 1);
@@ -135,7 +135,7 @@ export default function MemoryPuzzle({ onUnlock }) {
           </div>
 
           <AnimatePresence>
-            {scratchProgress > 60 && (
+            {scratchProgress > 35 && (
               <motion.button
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
