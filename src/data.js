@@ -15,7 +15,7 @@ export const GAME_DATA = {
 
   // Stage 2 - Case 3: Separation (Drag and Drop Chat)
   // Isi dengan pesan-pesan yang ingin diurutkan, dari urutan yang BENAR (pertama → terakhir)
-  // sender: 'marilyn' = kanan (merah) | sender: 'adika' = kiri (biru)
+  // sender: 'marilyn' = kiri (merah) | sender: 'adika' = kanan (biru)
   // Contoh:
   // { id: "1", sender: "marilyn", text: "savy, hey" },
   // { id: "2", sender: "adika",   text: "HEY" },

@@ -32,8 +32,8 @@ function shuffle(arr) {
   return a;
 }
 
-const MARILYN_NAME = '\u2039\uD835\uDE39\uD835\uDE2E \uD835\uDE33\uD835\uDE26\uD835\uDE22\uD835\uDE33 \uD835\uDE39\uD835\uDE22\uD835\uDE33\uD835\uDE2D\uD835\uDE3A\uD835\uDE3B\u203A';
-const ADIKA_NAME   = '\u20B3\u030A\u00D0\u0457\u0308\u0308\u04E5\u04E3\u030A\u10C1\u00E5 \u0493\u1D1C\u20DD\u300E\uD835\uDC0A\uD835\uDC11\uD835\uDC16\u300F';
+const MARILYN_NAME = '‹𝙈𝙮 𝘿𝙚𝙖𝙧 𝙈𝙖𝙧𝙞𝙡𝙮𝙣›';
+const ADIKA_NAME   = 'Rp. Dewa\u1D43\u1D9C\u1D43\u02BC\u1D2C\u1D5B\u1DA3..  ( ? )';
 
 // ── Drag card (left panel) ────────────────────
 const SortableCard = ({ item, solved, activeId }) => {
@@ -115,13 +115,13 @@ const ChatBubble = ({ item, highlight }) => {
     <div style={{
       display: 'flex',
       flexDirection: 'column',
-      alignItems: isMarilyn ? 'flex-end' : 'flex-start',
+      alignItems: isMarilyn ? 'flex-start' : 'flex-end',
       marginBottom: '3px',
     }}>
       <div style={{
         maxWidth: '82%',
         padding: '5px 9px 7px',
-        borderRadius: isMarilyn ? '10px 2px 10px 10px' : '2px 10px 10px 10px',
+        borderRadius: isMarilyn ? '2px 10px 10px 10px' : '10px 2px 10px 10px',
         background: isMarilyn
           ? highlight ? 'rgba(160,25,25,0.80)' : 'rgba(120,15,15,0.65)'
           : highlight ? 'rgba(25,45,170,0.80)' : 'rgba(15,25,130,0.60)',
@@ -140,11 +140,11 @@ const ChatBubble = ({ item, highlight }) => {
           lineHeight: 1.45,
           wordBreak: 'break-word',
           margin: 0,
-          paddingRight: isMarilyn ? '24px' : '0',
+          paddingRight: isMarilyn ? '0' : '24px',
         }}>
           {item.text}
         </p>
-        {isMarilyn && (
+        {!isMarilyn && (
           <span style={{
             position: 'absolute',
             bottom: '4px',
@@ -271,8 +271,8 @@ export default function MemoryChatDrag({ onUnlock }) {
           >
             <div style={{ alignSelf: 'center', background: '#182229', color: '#8496a0', fontSize: '9px', padding: '2px 8px', borderRadius: '8px', marginBottom: '8px', fontFamily: "'JetBrains Mono', monospace" }}>2025</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', padding: '0 2px' }}>
-              <span style={{ fontSize: '7px', color: '#3c6ee0', fontFamily: "'JetBrains Mono', monospace", maxWidth: '46%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>← {ADIKA_NAME}</span>
-              <span style={{ fontSize: '7px', color: '#dc3c3c', fontFamily: "'JetBrains Mono', monospace", maxWidth: '46%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'right' }}>{MARILYN_NAME} →</span>
+              <span style={{ fontSize: '7px', color: '#dc3c3c', fontFamily: "'JetBrains Mono', monospace", maxWidth: '46%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>← {MARILYN_NAME}</span>
+              <span style={{ fontSize: '7px', color: '#3c6ee0', fontFamily: "'JetBrains Mono', monospace", maxWidth: '46%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'right' }}>{ADIKA_NAME} →</span>
             </div>
             {items.map((item, i) => {
               const isCorrectPos = item.id === correct[i].id;
@@ -433,19 +433,19 @@ export default function MemoryChatDrag({ onUnlock }) {
               padding: '0 2px',
             }}>
               <span style={{
-                fontSize: '7.5px', color: '#3c6ee0',
+                fontSize: '7.5px', color: '#dc3c3c',
                 fontFamily: "'JetBrains Mono', monospace",
                 maxWidth: '46%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
               }}>
-                ← {ADIKA_NAME}
+                ← {MARILYN_NAME}
               </span>
               <span style={{
-                fontSize: '7.5px', color: '#dc3c3c',
+                fontSize: '7.5px', color: '#3c6ee0',
                 fontFamily: "'JetBrains Mono', monospace",
                 maxWidth: '46%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                 textAlign: 'right',
               }}>
-                {MARILYN_NAME} →
+                {ADIKA_NAME} →
               </span>
             </div>
 
