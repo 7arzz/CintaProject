@@ -4,6 +4,7 @@ import {
   closestCenter,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragOverlay,
@@ -46,7 +47,7 @@ const SortableCard = ({ item, solved, activeId }) => {
   return (
     <div
       ref={setNodeRef}
-      style={{ transform: CSS.Transform.toString(transform), transition }}
+      style={{ transform: CSS.Transform.toString(transform), transition, touchAction: 'none' }}
       {...attributes}
       {...listeners}
     >
@@ -167,8 +168,17 @@ export default function MemoryChatDrag({ onUnlock }) {
   const [activeId, setActiveId] = useState(null);
   const chatBodyRef             = React.useRef(null);
 
+  // Responsive: detect mobile
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(TouchSensor,   { activationConstraint: { delay: 250, tolerance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
@@ -205,15 +215,83 @@ export default function MemoryChatDrag({ onUnlock }) {
   return (
     <div style={{
       width: '100%',
-      maxWidth: '820px',
+      maxWidth: isMobile ? '100%' : '820px',
       display: 'flex',
-      gap: '14px',
+      flexDirection: isMobile ? 'column' : 'row',
+      gap: isMobile ? '10px' : '14px',
       alignItems: 'flex-start',
-      padding: '0 4px',
+      padding: isMobile ? '0' : '0 4px',
     }}>
 
-      {/* ── LEFT: Drag list ─────────────────── */}
-      <div style={{ flex: '0 0 248px', display: 'flex', flexDirection: 'column' }}>
+      {/* ── TOP (mobile) / LEFT (desktop): WhatsApp preview ── */}
+      {isMobile && (
+        <div style={{
+          width: '100%',
+          borderRadius: '10px',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '260px',
+          background: '#0b141a',
+          border: '1px solid rgba(255,255,255,0.06)',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.45)',
+          flexShrink: 0,
+        }}>
+          {/* Header */}
+          <div style={{
+            background: '#182229',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            padding: '8px 12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            flexShrink: 0,
+          }}>
+            <div style={{
+              width: '28px', height: '28px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #3c6ee0 0%, #ef6c6c 100%)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '11px', fontWeight: 700, color: '#fff',
+              flexShrink: 0,
+            }}>M</div>
+            <div>
+              <p style={{ fontSize: '11px', fontWeight: 600, color: '#e9edef', lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '220px' }}>
+                {MARILYN_NAME}
+              </p>
+              <p style={{ fontSize: '8px', color: '#8696a0', fontFamily: "'JetBrains Mono', monospace" }}>
+                last seen long ago
+              </p>
+            </div>
+          </div>
+          {/* Chat body */}
+          <div
+            ref={chatBodyRef}
+            style={{ flex: 1, padding: '8px 6px', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}
+          >
+            <div style={{ alignSelf: 'center', background: '#182229', color: '#8496a0', fontSize: '9px', padding: '2px 8px', borderRadius: '8px', marginBottom: '8px', fontFamily: "'JetBrains Mono', monospace" }}>2025</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', padding: '0 2px' }}>
+              <span style={{ fontSize: '7px', color: '#3c6ee0', fontFamily: "'JetBrains Mono', monospace", maxWidth: '46%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>← {ADIKA_NAME}</span>
+              <span style={{ fontSize: '7px', color: '#dc3c3c', fontFamily: "'JetBrains Mono', monospace", maxWidth: '46%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'right' }}>{MARILYN_NAME} →</span>
+            </div>
+            {items.map((item, i) => {
+              const isCorrectPos = item.id === correct[i].id;
+              return <ChatBubble key={item.id} item={item} highlight={solved || isCorrectPos} />;
+            })}
+          </div>
+          {/* Input bar */}
+          <div style={{ background: '#182229', borderTop: '1px solid rgba(255,255,255,0.06)', padding: '7px 10px', flexShrink: 0 }}>
+            <div style={{ background: '#2a3942', borderRadius: '20px', height: '28px', display: 'flex', alignItems: 'center', padding: '0 12px' }}>
+              <span style={{ fontSize: '9px', color: '#8696a0', fontFamily: "'JetBrains Mono', monospace" }}>
+                {solved ? '// conversation restored ✓' : '// urutkan pesan di bawah…'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── BOTTOM (mobile) / LEFT (desktop): Drag list ── */}
+      <div style={{ flex: isMobile ? 'unset' : '0 0 248px', width: isMobile ? '100%' : undefined, display: 'flex', flexDirection: 'column' }}>
         <p style={{
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: '8px',
@@ -281,129 +359,131 @@ export default function MemoryChatDrag({ onUnlock }) {
         </p>
       </div>
 
-      {/* ── RIGHT: WhatsApp preview ──────────── */}
-      <div style={{
-        flex: 1,
-        borderRadius: '12px',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '520px',
-        background: '#0b141a',
-        border: '1px solid rgba(255,255,255,0.06)',
-        boxShadow: '0 4px 32px rgba(0,0,0,0.45)',
-      }}>
-        {/* Header */}
+      {/* ── RIGHT: WhatsApp preview (desktop only) ──────────── */}
+      {!isMobile && (
         <div style={{
-          background: '#182229',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-          padding: '9px 13px',
+          flex: 1,
+          borderRadius: '12px',
+          overflow: 'hidden',
           display: 'flex',
-          alignItems: 'center',
-          gap: '9px',
-          flexShrink: 0,
+          flexDirection: 'column',
+          height: '520px',
+          background: '#0b141a',
+          border: '1px solid rgba(255,255,255,0.06)',
+          boxShadow: '0 4px 32px rgba(0,0,0,0.45)',
         }}>
+          {/* Header */}
           <div style={{
-            width: '32px', height: '32px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #3c6ee0 0%, #ef6c6c 100%)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '12px', fontWeight: 700, color: '#fff',
-            flexShrink: 0,
-          }}>M</div>
-          <div>
-            <p style={{ fontSize: '12px', fontWeight: 600, color: '#e9edef', lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '170px' }}>
-              {MARILYN_NAME}
-            </p>
-            <p style={{ fontSize: '9px', color: '#8696a0', fontFamily: "'JetBrains Mono', monospace" }}>
-              last seen long ago
-            </p>
-          </div>
-        </div>
-
-        {/* Chat body */}
-        <div
-          ref={chatBodyRef}
-          style={{
-            flex: 1,
-            padding: '10px 8px',
-            overflowY: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {/* Date chip */}
-          <div style={{
-            alignSelf: 'center',
             background: '#182229',
-            color: '#8496a0',
-            fontSize: '10px',
-            padding: '3px 10px',
-            borderRadius: '8px',
-            marginBottom: '10px',
-            fontFamily: "'JetBrains Mono', monospace",
-          }}>
-            2025
-          </div>
-
-          {/* Sender legend */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginBottom: '8px',
-            padding: '0 2px',
-          }}>
-            <span style={{
-              fontSize: '7.5px', color: '#3c6ee0',
-              fontFamily: "'JetBrains Mono', monospace",
-              maxWidth: '46%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            }}>
-              ← {ADIKA_NAME}
-            </span>
-            <span style={{
-              fontSize: '7.5px', color: '#dc3c3c',
-              fontFamily: "'JetBrains Mono', monospace",
-              maxWidth: '46%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-              textAlign: 'right',
-            }}>
-              {MARILYN_NAME} →
-            </span>
-          </div>
-
-          {/* Bubbles */}
-          {items.map((item, i) => {
-            const isCorrectPos = item.id === correct[i].id;
-            return (
-              <ChatBubble key={item.id} item={item} highlight={solved || isCorrectPos} />
-            );
-          })}
-        </div>
-
-        {/* Decorative input bar */}
-        <div style={{
-          background: '#182229',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
-          padding: '9px 11px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          flexShrink: 0,
-        }}>
-          <div style={{
-            flex: 1,
-            background: '#2a3942',
-            borderRadius: '20px',
-            height: '32px',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            padding: '9px 13px',
             display: 'flex',
             alignItems: 'center',
-            padding: '0 13px',
+            gap: '9px',
+            flexShrink: 0,
           }}>
-            <span style={{ fontSize: '10px', color: '#8696a0', fontFamily: "'JetBrains Mono', monospace" }}>
-              {solved ? '// conversation restored ✓' : '// sort messages on the left…'}
-            </span>
+            <div style={{
+              width: '32px', height: '32px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #3c6ee0 0%, #ef6c6c 100%)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '12px', fontWeight: 700, color: '#fff',
+              flexShrink: 0,
+            }}>M</div>
+            <div>
+              <p style={{ fontSize: '12px', fontWeight: 600, color: '#e9edef', lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '170px' }}>
+                {MARILYN_NAME}
+              </p>
+              <p style={{ fontSize: '9px', color: '#8696a0', fontFamily: "'JetBrains Mono', monospace" }}>
+                last seen long ago
+              </p>
+            </div>
+          </div>
+
+          {/* Chat body */}
+          <div
+            ref={chatBodyRef}
+            style={{
+              flex: 1,
+              padding: '10px 8px',
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {/* Date chip */}
+            <div style={{
+              alignSelf: 'center',
+              background: '#182229',
+              color: '#8496a0',
+              fontSize: '10px',
+              padding: '3px 10px',
+              borderRadius: '8px',
+              marginBottom: '10px',
+              fontFamily: "'JetBrains Mono', monospace",
+            }}>
+              2025
+            </div>
+
+            {/* Sender legend */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginBottom: '8px',
+              padding: '0 2px',
+            }}>
+              <span style={{
+                fontSize: '7.5px', color: '#3c6ee0',
+                fontFamily: "'JetBrains Mono', monospace",
+                maxWidth: '46%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              }}>
+                ← {ADIKA_NAME}
+              </span>
+              <span style={{
+                fontSize: '7.5px', color: '#dc3c3c',
+                fontFamily: "'JetBrains Mono', monospace",
+                maxWidth: '46%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                textAlign: 'right',
+              }}>
+                {MARILYN_NAME} →
+              </span>
+            </div>
+
+            {/* Bubbles */}
+            {items.map((item, i) => {
+              const isCorrectPos = item.id === correct[i].id;
+              return (
+                <ChatBubble key={item.id} item={item} highlight={solved || isCorrectPos} />
+              );
+            })}
+          </div>
+
+          {/* Decorative input bar */}
+          <div style={{
+            background: '#182229',
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+            padding: '9px 11px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            flexShrink: 0,
+          }}>
+            <div style={{
+              flex: 1,
+              background: '#2a3942',
+              borderRadius: '20px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              padding: '0 13px',
+            }}>
+              <span style={{ fontSize: '10px', color: '#8696a0', fontFamily: "'JetBrains Mono', monospace" }}>
+                {solved ? '// conversation restored ✓' : '// sort messages on the left…'}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
